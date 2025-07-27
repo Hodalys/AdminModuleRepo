@@ -98,6 +98,18 @@ public class DoctorDAO implements UserDAO<Doctor> {
         }
     }
 
+    public boolean eliminar(String cedula) {
+        String sql = "DELETE FROM doctor WHERE cedula = ?";
+        try (Connection conn = ConexionSQL.conectar();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, cedula);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public List<Doctor> obtenerTodos() {
         List<Doctor> doctores = new ArrayList<>();
         String sql = "SELECT * FROM doctor";
