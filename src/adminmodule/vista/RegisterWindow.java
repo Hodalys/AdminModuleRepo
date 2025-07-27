@@ -1,5 +1,8 @@
-package adminmodule;
+package adminmodule.vista;
 
+import adminmodule.util.*;
+import adminmodule.dao.*;
+import adminmodule.modelo.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -147,45 +150,67 @@ aplicarRestricciones();
     }
 
     private void registrarPaciente() {
-        try {
+            try {
+            // Validación de cédula
             String cedula = cedulaField.getText().trim();
-            if (cedula.length() != 10) {
-                throw new IllegalArgumentException("La cédula debe tener 10 dígitos");
+            if (!CedulaEcuatoriana.validar(cedula)) {
+                throw new IllegalArgumentException("La cédula no es válida para Ecuador");
             }
 
+            // Validación de nombres
             String nombres = nombresField.getText().trim();
+            if (!Validaciones.validarNombresCompletos(nombres)) {
+                throw new IllegalArgumentException("Debe ingresar al menos dos nombres");
+            }
+
+            // Validación de apellidos
             String apellidos = apellidosField.getText().trim();
-            if (nombres.isEmpty() || apellidos.isEmpty()) {
-                throw new IllegalArgumentException("Nombres y apellidos son obligatorios");
+            if (!Validaciones.validarCampoObligatorio(apellidos)) {
+                throw new IllegalArgumentException("Los apellidos son obligatorios");
             }
 
+            // Validación de fecha de nacimiento
             Date fechaNacimiento = fechaNacimientoChooser.getDate();
-            if (fechaNacimiento == null) {
-                throw new IllegalArgumentException("Seleccione una fecha de nacimiento");
+            if (!Validaciones.validarFechaNacimiento(fechaNacimiento)) {
+                throw new IllegalArgumentException("Fecha de nacimiento inválida");
             }
 
+            // Validación de correo
+            String correo = correoField.getText().trim();
+            if (!Validaciones.validarEmail(correo)) {
+                throw new IllegalArgumentException("Formato de correo electrónico inválido");
+            }
+
+            // Validación de contraseña
             String contrasena = new String(contrasenaField.getPassword());
-            if (contrasena.length() < 6) {
+            if (!Validaciones.validarContrasena(contrasena)) {
                 throw new IllegalArgumentException("La contraseña debe tener al menos 6 caracteres");
             }
 
-            Usuario nuevoPaciente = new Usuario(
+            // Verificar si el usuario ya existe
+            PacienteDAO pacienteDAO = new PacienteDAO();
+            if (pacienteDAO.existe(cedula)) {
+                throw new IllegalArgumentException("La cédula ya está registrada");
+            }
+
+            // Crear y guardar el paciente
+            Paciente nuevoPaciente = new Paciente(
                 cedula, nombres, apellidos, fechaNacimiento,
                 sexoComboBox.getSelectedItem().toString(),
-                correoField.getText(), contrasena, "paciente",
-                null, null, null // Campos médicos se llenarán después
+                correo, contrasena, "paciente",
+                null, null, null
             );
 
-            UserDatabase.addUser(nuevoPaciente);
-            JOptionPane.showMessageDialog(this, "Paciente registrado exitosamente");
-            dispose();
-            
-             // Agregar estas líneas:
-        new HomeWindow().setVisible(true);
-        dispose();
+            if (pacienteDAO.guardar(nuevoPaciente)) {
+                JOptionPane.showMessageDialog(this, "Paciente registrado exitosamente");
+                new HomeWindow().setVisible(true);
+                dispose();
+            } else {
+                throw new Exception("Error al guardar en la base de datos");
+            }
 
         } catch (IllegalArgumentException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error de validación", JOptionPane.WARNING_MESSAGE);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error al registrar: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }

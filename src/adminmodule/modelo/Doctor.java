@@ -1,4 +1,4 @@
-package adminmodule;
+package adminmodule.modelo;
 
 import java.util.Date;
 

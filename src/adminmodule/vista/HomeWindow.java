@@ -1,5 +1,6 @@
-package adminmodule;
+package adminmodule.vista;
 
+import adminmodule.dao.*;
 import javax.swing.*;
 import java.awt.*;
 import java.sql.Connection;

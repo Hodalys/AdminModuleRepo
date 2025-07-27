@@ -1,14 +1,13 @@
-package adminmodule;
+package adminmodule.vista;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+public class PacienteWindow extends JFrame {
 
-public class AdminWindow extends JFrame {
-
-    public AdminWindow() {
-        setTitle("Panel del Administrador");
+    public PacienteWindow() {
+        setTitle("Panel del Paciente");
         setSize(600, 400);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);

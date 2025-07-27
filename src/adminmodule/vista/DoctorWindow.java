@@ -1,4 +1,4 @@
-package adminmodule;
+package adminmodule.vista;
 
 import javax.swing.*;
 import java.awt.*;

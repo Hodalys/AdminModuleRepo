@@ -1,5 +1,6 @@
-package adminmodule;
+package adminmodule.vista;
 
+import adminmodule.modelo.Usuario;
 import javax.swing.*;
 import java.awt.*;
 import java.text.SimpleDateFormat;
